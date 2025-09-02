@@ -5,19 +5,27 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.chess.containers.ModContainer;
 
 import static com.chess.Main.*;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import javax.swing.JFileChooser;
 
 public class MainScreen implements Screen {
+    final Main game;
+
     Texture loadbutton,startbutton;
     Rectangle loadbuttoncol = new Rectangle(getcords(7.5f, 8, 48, 16));
-    Rectangle startbuttonncol = new Rectangle(getcords(7.5f, 8, 48, 16));
+    Rectangle startbuttonncol = new Rectangle(getcords(7.5f, 30, 48, 16));
     Rectangle drawRect = new Rectangle();
     String filepath = "";
+
+    public MainScreen(final Main game) {
+        this.game = game;
+    }
 
     @Override
     public void show() {
@@ -53,10 +61,17 @@ public class MainScreen implements Screen {
             }
         } else if (mouseColider.overlaps(startbuttonncol)) {
             if (mousedown) {
-                
+                modContainer = new ModContainer(Path.of(filepath).getFileName().toString());
+                modContainer.loadPiecesFromDir(filepath+"\\assets\\pieces\\");
+                modContainer.loadTilesFromDir(filepath+"\\assets\\tiles\\");
+                modContainer.loadMiscFromDir(filepath+"\\assets\\misc\\");
+                modContainer.loadDataFromDir(filepath+"\\src\\data\\");
+                modContainer.loadScriptsFromDir(filepath+"\\src\\scripts\\");
+                game.setScreen(new GameScreen(game));
             }
         }
     }
+
 
     void draw() {
         spriteBatch.begin();

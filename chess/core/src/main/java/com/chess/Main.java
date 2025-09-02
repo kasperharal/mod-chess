@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.chess.containers.ModContainer;
 
 
 
@@ -22,6 +23,8 @@ public class Main extends Game {
     static FreeTypeFontParameter parameter = new FreeTypeFontParameter();
     static public BitmapFont font;
 
+    static public ModContainer modContainer;
+
     @Override
     public void create() {
         spriteBatch = new SpriteBatch();
@@ -29,8 +32,9 @@ public class Main extends Game {
         generator = new FreeTypeFontGenerator(Gdx.files.internal("Helvetica.ttf"));
         parameter.size = 22;
         font = generator.generateFont(parameter);
-        setScreen(new MainScreen());
+        this.setScreen(new MainScreen(this));
     }
+
 
     public static void baseInputLogic() {
         Vector3 screenCoords = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
