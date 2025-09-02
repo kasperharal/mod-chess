@@ -1,1 +1,3 @@
-libgdx.png
+Helvetica.ttf
+loadbutton.png
+startbutton.png
