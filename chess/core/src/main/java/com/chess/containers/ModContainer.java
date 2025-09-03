@@ -3,7 +3,6 @@ package com.chess.containers;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
@@ -12,9 +11,9 @@ import com.badlogic.gdx.graphics.Texture;
 public class ModContainer {
     public String name;
 
-    public ArrayList<Texture> pieces = new ArrayList<>();
-    public ArrayList<Texture> tiles = new ArrayList<>();
-    public ArrayList<Texture> misc = new ArrayList<>();
+    public HashMap<String,Texture> pieces = new HashMap<>();
+    public HashMap<String,Texture> tiles = new HashMap<>();
+    public HashMap<String,Texture> misc = new HashMap<>();
 
     public HashMap<String,String> data = new HashMap<>();
     public HashMap<String,String> scripts = new HashMap<>();
@@ -26,7 +25,7 @@ public class ModContainer {
     public void loadPiecesFromDir(String dirpath) {
         try {
             Files.list(Paths.get(dirpath))
-                 .forEach(path -> pieces.add(new Texture(Gdx.files.absolute(path.toAbsolutePath().toString()))));
+                 .forEach(path -> pieces.put(path.getFileName().toString().split("\\.")[0],new Texture(Gdx.files.absolute(path.toAbsolutePath().toString()))));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -35,7 +34,7 @@ public class ModContainer {
     public void loadTilesFromDir(String dirpath) {
         try {
             Files.list(Paths.get(dirpath))
-                 .forEach(path -> tiles.add(new Texture(Gdx.files.absolute(path.toAbsolutePath().toString()))));
+                 .forEach(path -> tiles.put(path.getFileName().toString().split("\\.")[0],new Texture(Gdx.files.absolute(path.toAbsolutePath().toString()))));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -44,7 +43,7 @@ public class ModContainer {
     public void loadMiscFromDir(String dirpath) {
         try {
             Files.list(Paths.get(dirpath))
-                 .forEach(path -> misc.add(new Texture(Gdx.files.absolute(path.toAbsolutePath().toString()))));
+                 .forEach(path -> misc.put(path.getFileName().toString().split("\\.")[0],new Texture(Gdx.files.absolute(path.toAbsolutePath().toString()))));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,7 +54,7 @@ public class ModContainer {
             Files.list(Paths.get(dirpath))
                  .forEach(path -> {
                     try {
-                        data.put(path.getFileName().toString(),Files.readString(path));
+                        data.put(path.getFileName().toString().split("\\.")[0],Files.readString(path));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -70,7 +69,7 @@ public class ModContainer {
             Files.list(Paths.get(dirpath))
                  .forEach(path -> {
                     try {
-                        scripts.put(path.getFileName().toString(),Files.readString(path));
+                        scripts.put(path.getFileName().toString().split("\\.")[0],Files.readString(path));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
