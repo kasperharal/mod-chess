@@ -2,17 +2,24 @@ package com.chess;
 
 import static com.chess.Main.*;
 
+
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.chess.JSFeatures.ChessInstace;
+import com.chess.JSFeatures.ChessUtils;
 import com.chess.containers.BordContainer;
+
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 
 public class GameScreen implements Screen {
     final Main game;
+    ChessInstace chessInstace;
 
     Rectangle drawRect = new Rectangle();
-    BordContainer gameBord = new BordContainer(8);
     
     public GameScreen(final Main game) {
         this.game = game;
@@ -22,7 +29,18 @@ public class GameScreen implements Screen {
     public void show() {
         spriteBatch = new SpriteBatch();
         font.getData().scale(0.5f);
-        System.out.println(modContainer.tiles.get(gameBord.bord[0]));
+        chessInstace = new ChessInstace();
+        try {
+            Context context = Context.enter();
+            context.setClassShutter(new JSClassShutter());
+            Scriptable scope = context.initStandardObjects();
+            context.evaluateString(scope, modContainer.scripts.get("init.js"), "scriptFile-init.js", 1, null);
+            ScriptableObject.putProperty(scope, "chess", Context.javaToJS(chessInstace, scope));
+            context.evaluateString(scope, "init('"+modContainer.name+"');", "scriptJava-init", 1, null);
+        } finally {
+            Context.exit();
+        }
+
 
     }
 
@@ -42,21 +60,21 @@ public class GameScreen implements Screen {
 
     void draw() {
         spriteBatch.begin();
-        int tilesize = 64 / gameBord.size;
+        int tilesize = 64 / chessInstace.bord().getBordsize();
         int index = 0;
-        for (int col = 0; col < gameBord.size*tilesize; col+=tilesize) {
+        for (int col = 0; col < chessInstace.bord().getBordsize()*tilesize; col+=tilesize) {
             if (col % (tilesize*2) == 0) {
                 // Left to right
-                for (int row = 0; row < gameBord.size*tilesize; row+=tilesize) {
+                for (int row = 0; row < chessInstace.bord().getBordsize()*tilesize; row+=tilesize) {
                     drawRect = getcords(col, row, tilesize, tilesize);
-                    spriteBatch.draw(modContainer.tiles.get(gameBord.bord[index]), drawRect.x, drawRect.y, drawRect.width, drawRect.height);
+                    spriteBatch.draw(modContainer.tiles.get(chessInstace.bord().getBordTile(index)), drawRect.x, drawRect.y, drawRect.width, drawRect.height);
                     index++;
                 }
             } else {
                 // Right to left
-                for (int row = gameBord.size*tilesize-tilesize; row >= 0; row-=tilesize) {
+                for (int row = chessInstace.bord().getBordsize()*tilesize-tilesize; row >= 0; row-=tilesize) {
                     drawRect = getcords(col, row, tilesize, tilesize);
-                    spriteBatch.draw(modContainer.tiles.get(gameBord.bord[index]), drawRect.x, drawRect.y, drawRect.width, drawRect.height);
+                    spriteBatch.draw(modContainer.tiles.get(chessInstace.bord().getBordTile(index)), drawRect.x, drawRect.y, drawRect.width, drawRect.height);
                     index++;
                 }
             }

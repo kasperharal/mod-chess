@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,8 +16,8 @@ public class ModContainer {
     public ArrayList<Texture> tiles = new ArrayList<>();
     public ArrayList<Texture> misc = new ArrayList<>();
 
-    public ArrayList<String> data = new ArrayList<>();
-    public ArrayList<String> scripts = new ArrayList<>();
+    public HashMap<String,String> data = new HashMap<>();
+    public HashMap<String,String> scripts = new HashMap<>();
 
     public ModContainer(String name) {
         this.name = name;
@@ -54,7 +55,7 @@ public class ModContainer {
             Files.list(Paths.get(dirpath))
                  .forEach(path -> {
                     try {
-                        data.add(Files.readString(path));
+                        data.put(path.getFileName().toString(),Files.readString(path));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -69,7 +70,7 @@ public class ModContainer {
             Files.list(Paths.get(dirpath))
                  .forEach(path -> {
                     try {
-                        scripts.add(Files.readString(path));
+                        scripts.put(path.getFileName().toString(),Files.readString(path));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
